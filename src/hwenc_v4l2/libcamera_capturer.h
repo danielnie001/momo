@@ -18,17 +18,16 @@ struct LibcameraCapturerConfig : V4L2VideoCapturerConfig {
   LibcameraCapturerConfig(const LibcameraCapturerConfig& config) {
     *this = config;
   }
-  // native_frame_output == true の場合、キャプチャしたデータを kNative なフレームとして渡す。
-  // native_frame_output == false の場合、データをコピーして I420Buffer なフレームを作って渡す。
-  // 前者の方が効率が良いけれども、kNative なフレームはサイマルキャスト時に自動で
-  // リサイズしてくれないので、状況に応じて使い分けるのが良い。
+  // native_frame_output == true 的情况下，将捕获的数据作为 kNative 帧传递。
+  // native_frame_output == false 的情况下，复制数据并创建 I420Buffer 帧传递。
+  // 前者效率更高，但 kNative 帧在进行 Simulcast 时不会自动调整大小，因此应根据情况选择使用哪种方式。
   bool native_frame_output = false;
 };
 
-// Raspberry Pi 専用のカメラからの映像を取得するクラス
-// 出力の形式として、fd そのままで取得する形式と、メモリ上にコピーして取得する形式がある
-// 渡されるフレームバッファは、fd そのままで取得する場合は V4L2NativeBuffer クラスになり、
-// メモリ上にコピーする場合は webrtc::I420Buffer クラスになる。
+  // 用于从 Raspberry Pi 专用相机获取视频的类
+  // 输出格式有两种：直接从 fd 获取和复制到内存中获取
+  // 传递的帧缓冲区，如果直接从 fd 获取则为 V4L2NativeBuffer 类，
+  // 如果复制到内存中则为 webrtc::I420Buffer 类。
 class LibcameraCapturer : public ScalableVideoTrackSource {
  public:
   static rtc::scoped_refptr<LibcameraCapturer> Create(

@@ -17,10 +17,10 @@
 
 #include "url_parts.h"
 
-// SSL+クライアント、非SSL+クライアント、サーバで大体同じように扱える WebSocket。
+// SSL+客户端、非SSL+客户端、服务器可以大致相同地处理 WebSocket。
 //
-// 任意のスレッドから WriteText を呼ぶことで書き込みができ、
-// 書き込み完了のコールバックを待たずに次の WriteText を呼ぶことができる。
+// 可以从任意线程调用 WriteText 进行写操作，
+// 不需要等待写操作完成的回调即可调用下一次 WriteText。
 class Websocket {
  public:
   typedef boost::beast::websocket::stream<boost::asio::ip::tcp::socket>
@@ -42,9 +42,9 @@ class Websocket {
   struct https_proxy_tag {};
 
  public:
-  // 非SSL+クライアント
+  // 非SSL+客户端
   Websocket(boost::asio::io_context& ioc);
-  // SSL+クライアント
+  // SSL+客户端
   Websocket(ssl_tag,
             boost::asio::io_context& ioc,
             bool insecure,
@@ -61,14 +61,14 @@ class Websocket {
             std::string proxy_password);
 
  public:
-  // サーバ
+  // 服务器
   Websocket(boost::asio::ip::tcp::socket socket);
   ~Websocket();
 
-  // WebSocket クライアントの接続確立
+  // WebSocket 客户端连接建立
   void Connect(const std::string& url, connect_callback_t on_connect);
 
-  // WebSocket サーバの接続確立
+  // WebSocket 服务器连接建立
   void Accept(boost::beast::http::request<boost::beast::http::string_body> req,
               connect_callback_t on_connect);
 

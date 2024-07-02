@@ -17,15 +17,13 @@
 #include "video_codec_info.h"
 #include "video_track_receiver.h"
 
-// webrtc::PeerConnectionFactory から ConnectionContext を取り出す方法が無いので、
-// 継承して無理やり使えるようにする
+// 由于无法从 webrtc::PeerConnectionFactory 中提取 ConnectionContext，
+// 因此通过继承强制使其可用。
 class CustomPeerConnectionFactory : public webrtc::PeerConnectionFactory {
  public:
   CustomPeerConnectionFactory(
       webrtc::PeerConnectionFactoryDependencies dependencies)
-      : CustomPeerConnectionFactory(
-            webrtc::ConnectionContext::Create(&dependencies),
-            &dependencies) {}
+      : CustomPeerConnectionFactory(webrtc::ConnectionContext::Create(&dependencies),&dependencies) {}
   CustomPeerConnectionFactory(
       rtc::scoped_refptr<webrtc::ConnectionContext> context,
       webrtc::PeerConnectionFactoryDependencies* dependencies)
@@ -117,4 +115,4 @@ class RTCManager {
   RTCDataManagerDispatcher data_manager_dispatcher_;
 };
 
-#endif
+#endif  //RTC_MANAGER_H_

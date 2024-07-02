@@ -6,7 +6,7 @@
 // Linux
 #include <linux/videodev2.h>
 
-// MMAP なバッファと DMABUF なバッファを扱うためのクラス
+// 用于处理 MMAP 缓冲区和 DMABUF 缓冲区的类。
 class V4L2Buffers {
  public:
   struct PlaneBuffer {

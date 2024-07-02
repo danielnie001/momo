@@ -18,7 +18,7 @@
 static std::shared_ptr<boost::asio::ssl::context> CreateSSLContext(
     const std::string& client_cert,
     const std::string& client_key) {
-  // TLS 1.2 と 1.3 のみ対応
+  // 支持TLS 1.2 和 1.3
   SSL_CTX* handle = ::SSL_CTX_new(::TLS_method());
   SSL_CTX_set_min_proto_version(handle, TLS1_2_VERSION);
   SSL_CTX_set_max_proto_version(handle, TLS1_3_VERSION);
@@ -98,7 +98,7 @@ void Websocket::InitWss(ssl_websocket_t* wss, bool insecure) {
         if (preverified) {
           return true;
         }
-        // insecure の場合は証明書をチェックしない
+        // 如果是 insecure，则不检查证书。
         if (insecure) {
           return true;
         }
@@ -116,7 +116,7 @@ Websocket::ssl_websocket_t& Websocket::NativeSecureSocket() {
 }
 
 void Websocket::Connect(const std::string& url, connect_callback_t on_connect) {
-  // proxy 時は wss のみサポート
+  // 代理时仅支持 wss
   if (https_proxy_) {
     ConnectProxy(url, std::move(on_connect));
     return;
@@ -128,14 +128,14 @@ void Websocket::Connect(const std::string& url, connect_callback_t on_connect) {
     return;
   }
 
-  // wss と ws のみサポート
+  // 仅支持 wss 和 ws
   if (parts_.scheme != "wss" && parts_.scheme != "ws") {
     on_connect(boost::system::errc::make_error_code(
         boost::system::errc::invalid_argument));
     return;
   }
 
-  // コンストラクタの設定と接続のスキームが合っているか
+  // 确认构造函数的设置与连接的方案是否匹配
   if (IsSSL() && parts_.scheme != "wss" || !IsSSL() && parts_.scheme != "ws") {
     on_connect(boost::system::errc::make_error_code(
         boost::system::errc::invalid_argument));
@@ -143,7 +143,7 @@ void Websocket::Connect(const std::string& url, connect_callback_t on_connect) {
   }
 
   if (IsSSL()) {
-    // SNI の設定を行う
+    // 设置 SNI
     if (!SSL_set_tlsext_host_name(wss_->next_layer().native_handle(),
                                   parts_.host.c_str())) {
       boost::system::error_code ec{static_cast<int>(::ERR_get_error()),
@@ -155,7 +155,7 @@ void Websocket::Connect(const std::string& url, connect_callback_t on_connect) {
 
   on_connect_ = std::move(on_connect);
 
-  // DNS ルックアップ
+  // 进行 DNS 查找
   resolver_->async_resolve(
       parts_.host, parts_.GetPort(),
       std::bind(&Websocket::OnResolve, this, std::placeholders::_1,
@@ -171,7 +171,7 @@ void Websocket::OnResolve(
     return;
   }
 
-  // DNS ルックアップで得られたエンドポイントに対して接続する
+  // 连接到 DNS 查找得到的端点
   if (IsSSL()) {
     boost::asio::async_connect(
         wss_->next_layer().next_layer(), results.begin(), results.end(),
@@ -190,7 +190,7 @@ void Websocket::OnSSLConnect(boost::system::error_code ec) {
     return;
   }
 
-  // SSL のハンドシェイク
+  // 进行 SSL 握手
   wss_->next_layer().async_handshake(
       boost::asio::ssl::stream_base::client,
       std::bind(&Websocket::OnSSLHandshake, this, std::placeholders::_1));
@@ -204,7 +204,7 @@ void Websocket::OnSSLHandshake(boost::system::error_code ec) {
     return;
   }
 
-  // Websocket のハンドシェイク
+  // 进行 WebSocket 握手
   wss_->async_handshake(
       parts_.host, parts_.path_query_fragment,
       std::bind(&Websocket::OnHandshake, this, std::placeholders::_1));
@@ -217,7 +217,7 @@ void Websocket::OnConnect(boost::system::error_code ec) {
     return;
   }
 
-  // Websocket のハンドシェイク
+  // 进行 WebSocket 握手
   ws_->async_handshake(
       parts_.host, parts_.path_query_fragment,
       std::bind(&Websocket::OnHandshake, this, std::placeholders::_1));
@@ -284,7 +284,7 @@ void Websocket::ConnectProxy(const std::string& url,
     return;
   }
 
-  // 今は http + wss の組み合わせしか許可しない
+  // 目前仅允许 http + wss 组合
   if (proxy_parts_.scheme != "http" || parts_.scheme != "wss") {
     on_connect(boost::system::errc::make_error_code(
         boost::system::errc::invalid_argument));
@@ -293,7 +293,7 @@ void Websocket::ConnectProxy(const std::string& url,
 
   on_connect_ = std::move(on_connect);
 
-  // proxy サーバーの DNS 解決を行う
+  // 进行代理服务器的 DNS 解析
   resolver_->async_resolve(
       proxy_parts_.host, proxy_parts_.GetPort(),
       std::bind(&Websocket::OnResolveProxy, this, std::placeholders::_1,
@@ -321,7 +321,7 @@ void Websocket::OnConnectProxy(boost::system::error_code ec) {
     return;
   }
 
-  // CONNECT 送信
+  // 发送 CONNECT 请求
   auto target = parts_.host + ":" + parts_.GetPort();
   proxy_req_.method(boost::beast::http::verb::connect);
   proxy_req_.target(target);
@@ -344,7 +344,7 @@ void Websocket::OnWriteProxy(boost::system::error_code ec,
     return;
   }
 
-  // CONNECT のレスポンス読み込み
+  // 读取 CONNECT 响应
   proxy_resp_parser_.reset(
       new boost::beast::http::response_parser<boost::beast::http::empty_body>(
           proxy_resp_));
@@ -364,11 +364,11 @@ void Websocket::OnReadProxy(boost::system::error_code ec,
     return;
   }
 
-  // wss を作って、あとは普通の SSL ハンドシェイクを行う
+  // 创建 wss，然后进行常规的 SSL 握手
   wss_.reset(new ssl_websocket_t(std::move(*proxy_socket_), *ssl_ctx_));
   InitWss(wss_.get(), insecure_);
 
-  // SNI の設定を行う
+  // 设置 SNI
   if (!SSL_set_tlsext_host_name(wss_->next_layer().native_handle(),
                                 parts_.host.c_str())) {
     boost::system::error_code ec{static_cast<int>(::ERR_get_error()),

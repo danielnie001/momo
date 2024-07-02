@@ -5,35 +5,38 @@ cmake_policy(SET CMP0054 NEW)
 # MSVC runtime library flags are selected by an abstraction.
 cmake_policy(SET CMP0091 NEW)
 
-set(MOMO_PACKAGE_NAME "" CACHE STRING "ビルド設定を自動化するパッケージ名")
-set(TARGET_OS "" CACHE STRING "ビルド対象の動作する OS。\n有効な値は windows, macos, linux")
-set(TARGET_OS_LINUX "" CACHE STRING "TARGET_OS が linux の場合の詳細な OS の情報。")
-set(TARGET_ARCH "" CACHE STRING "ビルド対象の動作する CPU。\n有効な値は x86_64, arm")
-set(TARGET_ARCH_ARM "" CACHE STRING "TARGET_ARCH が arm の場合の詳細な CPU の情報。\n有効な値は armv6, armv7, armv8")
-set(USE_NVCODEC_ENCODER OFF CACHE BOOL "NVIDIA VIDEO CODEC SDK のハードウェアエンコーダを利用するかどうか")
-set(USE_MMAL_ENCODER OFF CACHE BOOL "MMAL ハードウェアエンコーダを利用するかどうか")
-set(USE_JETSON_ENCODER OFF CACHE BOOL "Jetson のハードウェアエンコーダを利用するかどうか")
-set(USE_MSDK_ENCODER OFF CACHE BOOL "Intel Media SDK のハードウェアエンコーダを利用するかどうか")
-set(USE_H264 OFF CACHE BOOL "H264 を利用するかどうか")
-set(USE_SDL2 OFF CACHE BOOL "SDL2 による画面出力を利用するかどうか")
-set(USE_LINUX_PULSE_AUDIO OFF CACHE BOOL "Linux で ALSA の代わりに PulseAudio を利用するか")
-set(USE_SCREEN_CAPTURER OFF CACHE BOOL "スクリーンキャプチャラを利用するかどうか")
-set(BOOST_ROOT_DIR "" CACHE PATH "Boost のインストール先ディレクトリ\n空文字だった場合はデフォルト検索パスの Boost を利用する")
-set(SDL2_ROOT_DIR "" CACHE PATH "SDL2 のインストール先ディレクトリ\n空文字だった場合はデフォルト検索パスの SDL2 を利用する")
-set(CLI11_ROOT_DIR "" CACHE PATH "CLI11 のインストール先ディレクトリ")
-set(NVCODEC_ROOT_DIR "" CACHE PATH "NVIDIA VIDEO CODEC SDK のインストール先ディレクトリ")
-set(WEBRTC_INCLUDE_DIR "" CACHE PATH "WebRTC のインクルードディレクトリ")
-set(WEBRTC_LIBRARY_DIR "" CACHE PATH "WebRTC のライブラリディレクトリ")
-set(WEBRTC_LIBRARY_NAME "webrtc" CACHE STRING "WebRTC のライブラリ名")
-set(CLANG_ROOT "" CACHE PATH "コンパイルに利用する clang コンパイラの配置場所")
-set(USE_LIBCXX OFF CACHE BOOL "libstdc++ の代わりに libc++ を使うかどうか")
-set(LIBCXX_INCLUDE_DIR "" CACHE PATH "libc++ を使う場合の libc++ のインクルードディレクトリ\n空文字だった場合はデフォルト検索パスの libc++ を利用する")
-set(SYSROOT "" CACHE PATH "TARGET_ARCH が arm の場合のクロスビルド用の RootFS ディレクトリ")
-set(MOMO_VERSION "unspecified" CACHE STRING "Momo のバージョン")
-set(MOMO_COMMIT "<commit>" CACHE STRING "Momo のコミットハッシュ")
-set(WEBRTC_BUILD_VERSION "unspecified" CACHE STRING "webrtc-build のバージョン")
-set(WEBRTC_READABLE_VERSION "unspecified" CACHE STRING "WebRTC の読みやすいバージョン")
-set(WEBRTC_COMMIT "<commit>" CACHE STRING "WebRTC のコミットハッシュ")
+set(MOMO_PACKAGE_NAME "macos_arm64" CACHE STRING "构建设置自动化的软件包名称")
+message("CMAKE_CURRENT_SOURCE_DIR : ${MOMO_PACKAGE_NAME}")
+set(TARGET_OS "macos" CACHE STRING "构建目标运行的操作系统。\n有效值为 windows, macos, linux")
+set(TARGET_OS_LINUX "" CACHE STRING "TARGET_OS 为 linux 时的详细操作系统信息。")
+set(TARGET_ARCH "" CACHE STRING "构建目标运行的 CPU。\n有效值为 x86_64, arm")
+set(TARGET_ARCH_ARM "" CACHE STRING "TARGET_ARCH 为 arm 时的详细 CPU 信息。\n有效值为 armv6, armv7, armv8")
+set(USE_NVCODEC_ENCODER OFF CACHE BOOL "是否使用 NVIDIA VIDEO CODEC SDK 的硬件编码器")
+set(USE_MMAL_ENCODER OFF CACHE BOOL "是否使用 MMAL 硬件编码器")
+set(USE_JETSON_ENCODER OFF CACHE BOOL "是否使用 Jetson 的硬件编码器")
+set(USE_MSDK_ENCODER OFF CACHE BOOL "是否使用 Intel Media SDK 的硬件编码器")
+set(USE_H264 OFF CACHE BOOL "是否使用 H264")
+set(USE_SDL2 OFF CACHE BOOL "是否使用 SDL2 进行画面输出")
+set(USE_LINUX_PULSE_AUDIO OFF CACHE BOOL "在 Linux 上是否使用 PulseAudio 代替 ALSA")
+set(USE_SCREEN_CAPTURER OFF CACHE BOOL "是否使用屏幕捕捉器")
+set(BOOST_ROOT_DIR "" CACHE PATH "Boost 的安装目录\n如果为空则使用默认搜索路径的 Boost")
+set(SDL2_ROOT_DIR "" CACHE PATH "SDL2 的安装目录\n如果为空则使用默认搜索路径的 SDL2")
+set(CLI11_ROOT_DIR "" CACHE PATH "CLI11 的安装目录")
+set(NVCODEC_ROOT_DIR "" CACHE PATH "NVIDIA VIDEO CODEC SDK 的安装目录")
+set(WEBRTC_INCLUDE_DIR /Users/daniel/Code/webrtc-checkout/src CACHE PATH "WebRTC 的包含目录")
+message("WEBRTC_INCLUDE_DIR:${WEBRTC_INCLUDE_DIR}")
+set(WEBRTC_LIBRARY_DIR /Users/daniel/Code/webrtc-checkout/src/out/Default/obj CACHE PATH "WebRTC 的库目录")
+message("WEBRTC_LIBRARY_DIR:${WEBRTC_LIBRARY_DIR}")
+set(WEBRTC_LIBRARY_NAME "webrtc" CACHE STRING "WebRTC 的库名称")
+set(CLANG_ROOT "" CACHE PATH "用于编译的 clang 编译器位置")
+set(USE_LIBCXX OFF CACHE BOOL "是否使用 libc++ 代替 libstdc++")
+set(LIBCXX_INCLUDE_DIR "" CACHE PATH "使用 libc++ 时的包含目录\n如果为空则使用默认搜索路径的 libc++")
+set(SYSROOT "" CACHE PATH "TARGET_ARCH 为 arm 时的交叉构建用 RootFS 目录")
+set(MOMO_VERSION "unspecified" CACHE STRING "Momo 的版本")
+set(MOMO_COMMIT "<commit>" CACHE STRING "Momo 的提交哈希")
+set(WEBRTC_BUILD_VERSION "unspecified" CACHE STRING "webrtc-build 的版本")
+set(WEBRTC_READABLE_VERSION "unspecified" CACHE STRING "WebRTC 的可读版本")
+set(WEBRTC_COMMIT "<commit>" CACHE STRING "WebRTC 的提交哈希")
 
 if(MOMO_PACKAGE_NAME STREQUAL "windows_x86_64")
   set(_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/windows_x86_64/_install)
@@ -63,11 +66,11 @@ elseif(MOMO_PACKAGE_NAME STREQUAL "macos_arm64")
   set(USE_H264 ON)
   set(USE_SDL2 ON)
   set(USE_SCREEN_CAPTURER ON)
-  set(BOOST_ROOT_DIR ${_INSTALL_DIR}/boost)
-  set(SDL2_ROOT_DIR ${_INSTALL_DIR}/SDL2)
-  set(CLI11_ROOT_DIR ${_INSTALL_DIR}/CLI11)
-  set(WEBRTC_INCLUDE_DIR ${_INSTALL_DIR}/webrtc/include)
-  set(WEBRTC_LIBRARY_DIR ${_INSTALL_DIR}/webrtc/lib)
+  set(BOOST_ROOT_DIR /opt/homebrew/Cellar/boost/1.84.0_1)
+  set(SDL2_ROOT_DIR /opt/homebrew/Cellar/sdl2/2.30.2)
+  set(CLI11_ROOT_DIR /opt/homebrew/Cellar/cli11/2.4.2)
+  set(WEBRTC_INCLUDE_DIR /Users/daniel/Code/webrtc-checkout/src)
+  set(WEBRTC_LIBRARY_DIR /Users/daniel/Code/webrtc-checkout/src/out/Default/obj)
 
 elseif(MOMO_PACKAGE_NAME STREQUAL "raspberry-pi-os_armv6")
 
@@ -150,7 +153,7 @@ elseif(MOMO_PACKAGE_NAME STREQUAL "ubuntu-20.04_x86_64")
   set(WEBRTC_INCLUDE_DIR /root/webrtc/include)
   set(WEBRTC_LIBRARY_DIR /root/webrtc/lib)
 
-  # /root/llvm/clang にあるコンパイラは使わず、apt でインストールした clang-10 を利用する
+  # /root/llvm/clang 不要使用附带的编译器，而是使用通过 apt 安装的 clang-10。
   set(CMAKE_C_COMPILER clang-15)
   set(CMAKE_CXX_COMPILER clang++-15)
 
@@ -196,7 +199,7 @@ elseif(MOMO_PACKAGE_NAME STREQUAL "ubuntu-22.04_x86_64")
   set(WEBRTC_INCLUDE_DIR /root/webrtc/include)
   set(WEBRTC_LIBRARY_DIR /root/webrtc/lib)
 
-  # /root/llvm/clang にあるコンパイラは使わず、apt でインストールした clang-15 を利用する
+  # /root/llvm/clang 不要使用附带的编译器，而是使用通过 apt 安装的 clang-15。
   set(CMAKE_C_COMPILER clang-15)
   set(CMAKE_CXX_COMPILER clang++-15)
 
@@ -222,8 +225,8 @@ if (USE_SDL2 AND (NOT "${SDL2_ROOT_DIR}" STREQUAL ""))
   list(APPEND CMAKE_PREFIX_PATH ${SDL2_ROOT_DIR})
 endif()
 
-# SYSROOT とかの設定
-# これらの設定は project の前に行う必要がある
+# SYSROOT 或其他设置。
+# 这些设置需要在 project 之前进行。
 if (TARGET_OS STREQUAL "linux")
   if (TARGET_ARCH STREQUAL "arm")
     if (TARGET_ARCH_ARM STREQUAL "armv8")
@@ -328,8 +331,8 @@ target_link_libraries(momo
 
 target_compile_definitions(momo
   PRIVATE
-    # CLI11 は C++17 でのビルドにおいて std::filesystem を利用するが、これを clang で解決するには c++fs のリンクが必要になる。
-    # しかし、 libwebrtc の libc++ では std::filesystem が提供されていないため下記のオプションを追加して利用しないようにする。
+    # CLI11 在使用 C++17 进行构建时会使用 std::filesystem，但要在 clang 中解决此问题，需要链接 c++fs。
+    # 然而，libwebrtc 的 libc++ 并不提供 std::filesystem，因此需要添加以下选项以不使用它。
     CLI11_HAS_FILESYSTEM=0
     OPENSSL_IS_BORINGSSL
     USE_NVCODEC_ENCODER=$<BOOL:${USE_NVCODEC_ENCODER}>
@@ -341,7 +344,7 @@ target_compile_definitions(momo
     USE_SDL2=$<BOOL:${USE_SDL2}>
     USE_LINUX_PULSE_AUDIO=$<BOOL:${USE_LINUX_PULSE_AUDIO}>
     USE_SCREEN_CAPTURER=$<BOOL:${USE_SCREEN_CAPTURER}>
-    # https://github.com/boostorg/container_hash/issues/22 と同じ問題が clang-15 でも起きるので、これを手動で定義して回避する
+    # https://github.com/boostorg/container_hash/issues/22 同样的问题也会在 clang-15 上出现，因此需要手动定义以规避该问题。
     BOOST_NO_CXX98_FUNCTION_BASE
 )
 
@@ -421,12 +424,11 @@ if (USE_SCREEN_CAPTURER)
 endif()
 
 if ("${TARGET_OS}" STREQUAL "windows")
-  # 文字コードを utf-8 として扱うのと、シンボルテーブル数を増やす
+  # 将字符编码设为 utf-8，并增加符号表的数量。
   target_compile_options(momo PRIVATE /utf-8 /bigobj)
   set_target_properties(momo
     PROPERTIES
-      # CRTライブラリを静的リンクさせる
-      # CMake 3.15 以上なら MSVC_RUNTIME_LIBRARY が使える
+      # 将 CRT 库静态链接，如果是 CMake 3.15 以上版本，可以使用 MSVC_RUNTIME_LIBRARY。
       MSVC_RUNTIME_LIBRARY "MultiThreaded"
   )
 
@@ -486,10 +488,10 @@ if ("${TARGET_OS}" STREQUAL "windows")
         D3D11.lib
     )
 
-    # enable_language(CUDA) は CUDA 用 Visual Studio Integration を利用して CUDA を検出しているが、
-    # CUDA ドライバがインストールできない場所では VS Integration をインストールできないため、
-    # enable_language(CUDA) は利用できない。
-    # なので（deprecated だけど）FindCUDA を利用してコンパイルする。
+    # enable_language(CUDA) 使用 CUDA 的 Visual Studio Integration 来检测 CUDA，
+    # 但在无法安装 CUDA 驱动的地方无法安装 VS Integration，
+    # 因此不能使用 enable_language(CUDA)。
+    # 因此（尽管已弃用）使用 FindCUDA 来进行编译。
 
     set(CUDA_TOOLKIT_ROOT_DIR ${_INSTALL_DIR}/cuda/nvcc)
     find_package(CUDA REQUIRED)
@@ -583,7 +585,7 @@ elseif (TARGET_OS STREQUAL "linux")
       WEBRTC_POSIX
       WEBRTC_LINUX
   )
-  # Linux 系の場合はカスタムされた libc++ を使っているためオプション追加
+  # 对于 Linux 系统，由于使用了定制的 libc++，需要添加额外的选项。
   target_compile_definitions(momo PRIVATE _LIBCPP_ABI_NAMESPACE=Cr _LIBCPP_ABI_VERSION=2 _LIBCPP_DISABLE_AVAILABILITY)
 
   set_target_properties(momo PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -631,7 +633,7 @@ elseif (TARGET_OS STREQUAL "linux")
       set(_CUDA_COMPILE_OPTIONS "-xcuda;--cuda-gpu-arch=sm_35;-std=gnu++17")
     endif()
 
-    # これらのソースは CUDA としてコンパイルする
+    # 这些源代码要作为 CUDA 编译。
     set_source_files_properties(
         src/cuda/cuda_context_cuda.cpp
         src/hwenc_nvcodec/nvcodec_h264_encoder_cuda.cpp
@@ -669,7 +671,7 @@ elseif (TARGET_OS STREQUAL "linux")
     endif()
 
     if (TARGET_ARCH_ARM STREQUAL "armv8")
-      # Jetson の設定
+      # Jetson 的设置
       if (USE_JETSON_ENCODER)
 
         target_sources(momo

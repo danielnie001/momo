@@ -326,7 +326,7 @@ void LibcameraCapturer::requestComplete(libcamerac_Request* request) {
     OnFrame(video_frame);
     queueRequest(request);
   } else {
-    // DMA なので V4L2NativeBuffer に格納する
+    // 因为是 DMA，所以存储在 V4L2NativeBuffer 中。
     frame_buffer = rtc::make_ref_counted<V4L2NativeBuffer>(
         webrtc::VideoType::kI420, width, height, adapted_width, adapted_height,
         buffers[0].fd, nullptr, buffers[0].length, stride,
